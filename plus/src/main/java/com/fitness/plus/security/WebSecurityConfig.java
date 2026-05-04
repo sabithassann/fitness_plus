@@ -136,20 +136,20 @@ public class WebSecurityConfig {
 
 
             // Create or update user1
-            User user1 = userRepository.findByUserName("user1").orElse(new User("user1", "user1@example.com", ""));
-            user1.setPassword(passwordEncoder.encode("1234"));
-            user1.setRoles(userRoles);
-            userRepository.save(user1);
-
-            User seller1 = userRepository.findByUserName("seller1").orElse(new User("seller1", "seller1@example.com", ""));
-            seller1.setPassword(passwordEncoder.encode("1234"));
-            seller1.setRoles(sellerRoles);
-            userRepository.save(seller1);
-
-            User admin = userRepository.findByUserName("admin").orElse(new User("admin", "admin@example.com", ""));
-            admin.setPassword(passwordEncoder.encode("1234"));
-            admin.setRoles(adminRoles);
-            userRepository.save(admin);
+//            User user1 = userRepository.findByUserName("user1").orElse(new User("user1", "user1@example.com", ""));
+//            user1.setPassword(passwordEncoder.encode("1234"));
+//            user1.setRoles(userRoles);
+//            userRepository.save(user1);
+//
+//            User seller1 = userRepository.findByUserName("seller1").orElse(new User("seller1", "seller1@example.com", ""));
+//            seller1.setPassword(passwordEncoder.encode("1234"));
+//            seller1.setRoles(sellerRoles);
+//            userRepository.save(seller1);
+//
+//            User admin = userRepository.findByUserName("admin").orElse(new User("admin", "admin@example.com", ""));
+//            admin.setPassword(passwordEncoder.encode("1234"));
+//            admin.setRoles(adminRoles);
+//            userRepository.save(admin);
 
 
 //            if (!userRepository.existsByUserName("seller1")) {

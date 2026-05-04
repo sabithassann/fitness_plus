@@ -9,10 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name ="t_users",
@@ -44,13 +41,63 @@ public class User {
     @Size(max = 120)
     private String password;
 
+    @NotBlank
+    @Size(max = 120)
+    private Long gymsId;
 
-    public User(String userName, String email, String password) {
+    @NotBlank
+    @Size(max = 30)
+    private String Status;
+
+
+    @Size(max = 5)
+    private int emailVerified;
+
+    @NotBlank
+    private Date lastLoginAt;
+
+    @NotBlank
+    private Date updatedAt;
+
+    @NotBlank
+    private Date createdAt;
+
+    @NotBlank
+    @Size(max = 120)
+    private int updatedBy;
+
+    @NotBlank
+    @Size(max = 5)
+    private int isDeleted;
+
+    @NotBlank
+    @Size(max = 120)
+    private String phone;
+
+
+
+//
+//    public User(String userName, String email, String password) {
+//        this.userName = userName;
+//        this.email = email;
+//        this.password = password;
+//    }
+
+
+    public User(String userName, String email, String password, Long gymsId, String status, int emailVerified, Date lastLoginAt, Date updatedAt, Date createdAt, int updatedBy, int isDeleted, String phone) {
         this.userName = userName;
         this.email = email;
         this.password = password;
+        this.gymsId = gymsId;
+        Status = status;
+        this.emailVerified = emailVerified;
+        this.lastLoginAt = lastLoginAt;
+        this.updatedAt = updatedAt;
+        this.createdAt = createdAt;
+        this.updatedBy = updatedBy;
+        this.isDeleted = isDeleted;
+        this.phone = phone;
     }
-
 
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",

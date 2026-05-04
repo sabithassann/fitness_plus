@@ -12,7 +12,11 @@ import com.fitness.plus.repositories.RoleRepository;
 import com.fitness.plus.repositories.UserRepository;
 import com.fitness.plus.security.jwt.JwtUtils;
 import com.fitness.plus.security.services.UserDetailsImpl;
+import com.fitness.plus.util.RequestUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,6 +39,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -49,14 +56,18 @@ public class AuthController {
 
     @Autowired
     PasswordEncoder encoder;
+    private RequestAttributes requestAttributes;
 
     @PostMapping(
             value = "/signin",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest httpRequest) {
         Authentication authentication;
+        String ip = RequestUtil.getClientIp(httpRequest);
+
+        log.info("Login request from IP: {}", ip);
         try {
             authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -84,7 +95,11 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, HttpServletRequest httpRequest) {
+
+        String ip = RequestUtil.getClientIp(httpRequest);
+        log.info("Created user request from IP: {}", ip);
+
         if (userRepository.existsByUserName(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
         }
@@ -94,9 +109,20 @@ public class AuthController {
         }
 
         // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
+        User user = new User(
+                signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+                encoder.encode(signUpRequest.getPassword()),
+                signUpRequest.getGymsId(),
+                signUpRequest.getStatus(),
+                signUpRequest.getEmailVerified(),
+                signUpRequest.getLastLoginAt(),
+                new Date(),
+                new Date(),
+                signUpRequest.getUpdatedBy(),
+                signUpRequest.getIsDeleted(),
+                signUpRequest.getPhone()
+        );
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
